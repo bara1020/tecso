@@ -1,0 +1,54 @@
+server:
+  port: 8080
+  servlet.context-path: /api
+
+spring:
+  profiles.active: dev
+  application.name: ExamenTecso
+      
+---
+#DEV CONFIGURATION
+spring:
+  profiles: dev
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    show-sql: true    hibernate:      ddl-auto: update
+  datasource:
+    url: jdbc:mysql://localhost:3306/bank
+    driver-class-name: com.mysql.jdbc.Driver
+    username: tecso
+    password: tecso
+    #initialization-mode: always
+    
+jwt:
+  signing:
+    key:
+      secret: mySecret
+  get:
+    token:
+      uri: /authenticate
+  refresh:
+    token:
+      uri: /refresh
+  http:
+    request:
+      header: Authorization
+  token:
+    expiration:
+      in:
+        seconds: 604800
+---        
+#PROD CONFIGURATION
+spring:
+  profiles: qa
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+  datasource:
+    url: jdbc:mysql://localhost:3306/bank
+    driver-class-name: com.mysql.jdbc.Driver
+    username: tecso
+    password: tecso
+    #initialization-mode: always

@@ -1,0 +1,195 @@
+<div class="row">
+  <div class="col-md-12 text-center">
+    <h1>
+      Gestión de cuentas y movimientos
+    </h1>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <form class="form-inline">
+      <div class="form-group mx-sm-3 mb-2">
+        <input type="number" class="form-control" id="numberAccount" placeholder="Número de cuenta"
+          [(ngModel)]="numberAccount" name="numberAccount">
+      </div>
+      <button type="submit" class="btn btn-primary mb-2" (click)="getAccount()">Buscar <i
+          class="fas fa-search"></i></button>
+      <button type="submit" class="btn btn-primary mb-2 ml-2" (click)="open(CreateAccountModal)">Crear Cuenta <i
+          class="fas fa-plus"></i></button>
+      <button *ngIf="account" type="submit" class="btn btn-primary mb-2 ml-2" (click)="deleteAccount()">Eliminar Cuenta
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    </form>
+  </div>
+</div>
+<div class="row mb-2" *ngIf="account">
+  <div class="col-md-12">
+    <div class="alert alert-success" role="alert">
+      <strong>Saldo total: {{currencyCode}}{{account.balance}} </strong>
+    </div>
+  </div>
+</div>
+<div class="row mb-2" *ngIf="message.message != null">
+  <div class="col-md-12">
+    <div class="" [ngClass]="{'alert alert-danger': message.type=='error', 'alert alert-success': message.type!='error'}" role="alert">
+      <strong>{{message.message}} </strong>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <button type="button" class="btn btn-info float-right mb-2 text-light" (click)="open(CreateMovementModal)"  [disabled]="addMovement">Agregar <i class="fas fa-plus"></i></button>
+    <table class="table table-striped table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th>Fecha</th>
+          <th>Descripción</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="account">
+        <tr *ngFor="let item of account.movementList;let itemIndex = index">
+          <td scope="row">
+            {{ item.creationTimestamp | date :'short'}}
+          </td>
+          <td>
+            {{ item.description }}
+          </td>
+          <td [ngClass]="{ 'credit-text': item.movementType.id == 2 }">
+            {{currencyCode}}{{ item.amount }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+
+<!--BEGIN: MODAL CREATE ACOUNT -->
+<ng-template #CreateAccountModal let-modal>
+  <div class="modal-header">
+
+    <h2 class="modal-title text-uppercase text-center" id="modal-basic-title">Registro de cuenta</h2>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">×</span>
+    </button>
+    <div class="close-modal" data-dismiss="modal">
+
+    </div>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="accountForm" (ngSubmit)="createAccount()">
+      <div class="from-group mb-2">
+        <div class="form-group">
+          <label>Número de cuenta</label>
+          <input type="number" formControlName="numberAccount" class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && accountFormControls.numberAccount.errors }" />
+          <div *ngIf="submitted && accountFormControls.numberAccount.errors" class="invalid-feedback">
+            <div *ngIf="accountFormControls.numberAccount.errors.required">El número de cuenta es requerido</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Saldo Total</label>
+          <input type="text" formControlName="balance" class="form-control"
+                 [ngClass]="{ 'is-invalid': submitted && accountFormControls.balance.errors }"
+                 appTwoDigitDecimaNumber
+                 placeholder="0000.00"
+                 />
+          <div *ngIf="submitted && accountFormControls.balance.errors" class="invalid-feedback">
+            <div *ngIf="accountFormControls.balance.errors.required">Saldo total es requerido</div>
+            <div *ngIf="accountFormControls.balance.errors.pattern">El número debe tener dos decimales</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Moneda</label>
+          <select [(ngModel)]="selectedCurrency" formControlName="currency" class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && accountFormControls.currency.errors }">
+            <option value=""></option>
+            <option *ngFor="let currency of currencyList" [ngValue]="currency.id">
+              {{ currency.currency | titlecase }}
+            </option>
+          </select>
+          <div *ngIf="submitted && accountFormControls.currency.errors" class="invalid-feedback">
+            <div *ngIf="accountFormControls.currency.errors.required">El tipo de moneda es requerido</div>
+          </div>
+        </div>
+        <div class="form-group" *ngIf="message.message != null">
+            <div class="alert alert-danger" role="alert">
+              <strong>{{message.message}}</strong>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel')">Cancel</button>
+        <button class="btn btn-primary mr-1">
+          <i class="fas fa-plus"></i>Crear
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<!--END: MODAL CREATE ACCOUNT-->
+
+<!--BEGIN: MODAL CREATE MOVEMENT -->
+<ng-template #CreateMovementModal let-modal>
+  <div class="modal-header">
+
+    <h2 class="modal-title text-uppercase text-center" id="modal-basic-title">Registro de Movimiento</h2>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">×</span>
+    </button>
+    <div class="close-modal" data-dismiss="modal">
+
+    </div>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="movementForm" (ngSubmit)="createMovement()">
+      <div class="from-group mb-2">
+        <div class="form-group">
+          <label>Descripción</label>
+          <input type="text" formControlName="description" class="form-control"
+            [ngClass]="{ 'is-invalid': submittedMovementType && movementFormControls.description.errors }" />
+          <div *ngIf="submittedMovementType && movementFormControls.description.errors" class="invalid-feedback">
+            <div *ngIf="movementFormControls.description.errors.required">La descripción es requerida</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Valor</label>
+          <input type="text" formControlName="amount" class="form-control" minValue="1000"
+            [ngClass]="{'is-invalid': submittedMovementType && movementFormControls.amount.errors }" 
+           />
+          <div *ngIf="submittedMovementType && movementFormControls.amount.errors" class="invalid-feedback">
+            <div *ngIf="movementFormControls.amount.errors.required">El valor es requerido</div>
+            <div *ngIf="accountFormControls.amount.errors.pattern">El número debe tener dos decimales</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Tipo de movimiento</label>
+          <select [(ngModel)]="selectedMovementType" formControlName="movementType" class="form-control"
+            [ngClass]="{ 'is-invalid': submittedMovementType && movementFormControls.movementType.errors }">
+            <option value=""></option>
+            <option *ngFor="let movement of movementTypesList" [ngValue]="movement.id">
+              {{ movement.type | titlecase }}
+            </option>
+          </select>
+          <div *ngIf="submittedMovementType && movementFormControls.movementType.errors" class="invalid-feedback">
+            <div *ngIf="movementFormControls.movementType.errors.required">El tipo de movimiento es requerido</div>
+          </div>
+        </div>
+        <div class="form-group" *ngIf="message.message != null">
+            <div class="alert alert-danger" role="alert">
+              <strong>{{message.message}}</strong>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel')">Cancel</button>
+        <button class="btn btn-primary mr-1">
+          <i class="fas fa-plus"></i>Crear
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+<!--END: CREATE MOVEMENT MODAL-->

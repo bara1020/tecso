@@ -1,0 +1,227 @@
+<div class="row">
+    <div class="col-md-12 text-center">
+        <h1>
+            Gestión de titulares de cuentas corrientes
+        </h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <form class="form-inline">
+            <button type="submit" class="btn btn-primary mb-2 ml-2" (click)="open(CreateHolderModal,'crear',0)">Crear Titular <i
+                    class="fas fa-plus"></i></button>
+        </form>
+    </div>
+</div>
+<div class="row mb-2" *ngIf="message.message != null">
+    <div class="col-md-12">
+      <div class="" [ngClass]="{'alert alert-danger': message.type=='error', 'alert alert-success': message.type!='error'}" role="alert">
+        <strong>{{message.message}} </strong>
+      </div>
+    </div>
+  </div>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Titular</th>
+                    <th>Rut</th>
+                    <th>Fecha de registro</th>
+                    <th>Tipo persona</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let holder of holdersList; let holderIndex = index" (click)="holderSelected(holderIndex)">
+                    <td scope="row">
+                        <label *ngIf="holder.holderType.holderType == 'NATURAL'">
+                            {{holder.naturalPerson.name}}
+                        </label>
+                        <label *ngIf="holder.holderType.holderType == 'JURIDICO'">
+                            {{holder.legalEntity.name}}
+                        </label>
+                    </td>
+                    <td>{{holder.rut}}</td>
+                    <td> {{ holder.creationTimestamp | date :'short'}}</td>
+                    <td>{{holder.holderType.holderType}}</td>
+                    <td class="text-right">
+                        <a type="button" class="btn btn-outline-warning" (click)="open(CreateHolderModal,'editar',holderIndex)"><i class="fas fa-edit"></i></a>
+                        <a type="button" class="btn btn-outline-danger" (click)="open(DeleteHolderModal,'delete',0)"><i class="fas fa-trash-alt"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+
+<!--BEGIN: MODAL CREATE HOLDER -->
+<ng-template #CreateHolderModal let-modal>
+    <div class="modal-header">
+
+        <h2 class="modal-title text-uppercase text-center" id="modal-basic-title">Registro de Titular</h2>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">×</span>
+        </button>
+        <div class="close-modal" data-dismiss="modal">
+
+        </div>
+    </div>
+    <div class="modal-body">
+        <ngb-tabset #t="ngbTabset" justify="center" > 
+            <ngb-tab title="Persona física" *ngIf="tabHandler === 1 || tabHandler === 0 ">
+                <ng-template ngbTabContent>
+                    <form [formGroup]="holderNaturalPersonForm" (ngSubmit)="handlerCreateHolder(1)">
+                        <div class="from-group mb-2">
+                            <div class="form-group">
+                                <label>RUT</label>
+                                <input type="number" formControlName="rut" class="form-control"
+                                    [ngClass]="{ 'is-invalid': submittedHolderNaturalPerson && holderNaturalPersonFormControls.rut.errors }" 
+                                    [(ngModel)]="currentHolder.rut"/>
+                                <div *ngIf="submittedHolderNaturalPerson && holderNaturalPersonFormControls.rut.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="holderNaturalPersonFormControls.rut.errors.required">El rut es requerido
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" formControlName="name" class="form-control" minValue="1000"
+                                    [ngClass]="{'is-invalid': submittedHolderNaturalPerson && holderNaturalPersonFormControls.name.errors }" 
+                                    [(ngModel)]="currentHolder.naturalPerson.name"/>
+                                <div *ngIf="submittedHolderNaturalPerson && holderNaturalPersonFormControls.name.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="holderNaturalPersonFormControls.name.errors.required">El nombre es requerido
+                                    </div>
+                                    <div *ngIf="holderNaturalPersonFormControls.name.errors.maxlength">El campo solo admite máximo {{holderNaturalPersonFormControls.name.errors.maxlength.requiredLength}} carácteres.</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Apellidos</label>
+                                <input type="text" formControlName="lastName" class="form-control" minValue="1000"
+                                    [ngClass]="{'is-invalid': submittedHolderNaturalPerson && holderNaturalPersonFormControls.lastName.errors }" 
+                                    [(ngModel)]="currentHolder.naturalPerson.lastName"/>
+                                <div *ngIf="submittedHolderNaturalPerson && holderNaturalPersonFormControls.lastName.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="holderNaturalPersonFormControls.lastName.errors.required">Los apellidos
+                                        son requerido</div>
+                                        <div *ngIf="holderNaturalPersonFormControls.lastName.errors.maxlength">El campo solo admite máximo {{holderNaturalPersonFormControls.lastName.errors.maxlength.requiredLength}} carácteres.</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Cédula</label>
+                                <input type="number" formControlName="nit" class="form-control"
+                                    [ngClass]="{ 'is-invalid': submittedHolderNaturalPerson && holderNaturalPersonFormControls.nit.errors }"
+                                    [(ngModel)]="currentHolder.naturalPerson.nit" />
+                                <div *ngIf="submittedHolderNaturalPerson && holderNaturalPersonFormControls.nit.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="holderNaturalPersonFormControls.nit.errors.required">La cédula es
+                                        requerida</div>
+                                </div>
+                            </div>
+                            <div class="form-group" *ngIf="message.message != null">
+                                <div class="alert alert-danger" role="alert">
+                                    <strong>{{message.message}}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-outline-secondary"
+                                (click)="modal.dismiss('Cancel')">Cancel</button>
+                            <button class="btn btn-primary mr-1">
+                                <i class="fas fa-plus"></i> {{process}}
+                            </button>
+                        </div>
+                    </form>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab  *ngIf="tabHandler === 2 || tabHandler === 0 ">
+                <ng-template ngbTabTitle>Persona jurídica</ng-template>
+                <ng-template ngbTabContent>
+                    <form [formGroup]="holderLegalEntityForm" (ngSubmit)="handlerCreateHolder(2)">
+                        <div class="from-group mb-2">
+                            <div class="form-group">
+                                <label>RUT</label>
+                                <input type="number" formControlName="rut" class="form-control"
+                                    [ngClass]="{ 'is-invalid': submittedLegalEntityPerson && holderLegalEntityFormControls.rut.errors }"
+                                    [(ngModel)]="currentHolder.rut"  />
+                                <div *ngIf="submittedLegalEntityPerson && holderLegalEntityFormControls.rut.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="holderLegalEntityFormControls.rut.errors.required">El rut es requerido
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Razón social</label>
+                                <input type="text" formControlName="name" class="form-control"
+                                    [ngClass]="{'is-invalid': submittedLegalEntityPerson && holderLegalEntityFormControls.name.errors }"
+                                    [(ngModel)]="currentHolder.legalEntity.name" />
+                                <div *ngIf="submittedLegalEntityPerson && holderLegalEntityFormControls.name.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="holderLegalEntityFormControls.name.errors.required">La razón social es requerida</div>
+                                    <div *ngIf="holderLegalEntityFormControls.name.errors.maxlength">El campo solo admite máximo {{holderLegalEntityFormControls.name.errors.maxlength.requiredLength}} carácteres.</div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Año de fundación</label>
+                                <select [(ngModel)]="selectedYear" formControlName="foundationYear" class="form-control"
+                                    [ngClass]="{ 'is-invalid': submittedLegalEntityPerson && holderLegalEntityFormControls.foundationYear.errors }"
+                                    >
+                                    <option value=""></option>
+                                    <option *ngFor="let item of years" (change)="selectdYearHandler($event)" [selected]="item===selectedYear">
+                                        {{item}}
+                                    </option>
+                                </select>
+                                <div *ngIf="submittedLegalEntityPerson && holderLegalEntityFormControls.foundationYear.errors"
+                                    class="invalid-feedback">
+                                    <div *ngIf="holderLegalEntityFormControls.foundationYear.errors.required">El año de fundación es requerido</div>
+                                </div>
+                            </div>
+                            <div class="form-group" *ngIf="message.message != null">
+                                <div class="alert alert-danger" role="alert">
+                                    <strong>{{message.message}}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-outline-secondary"
+                                (click)="modal.dismiss('Cancel')" (click)="closeModel()">Cancel</button>
+                            <button class="btn btn-primary mr-1">
+                                <i class="fas fa-plus"></i> {{process}}
+                            </button>
+                        </div>
+                    </form>
+                </ng-template>
+            </ngb-tab>
+        </ngb-tabset>
+
+    </div>
+</ng-template>
+<!--END: CREATE MOVEMENT MODAL-->
+
+
+
+<!--BEGIN: MODAL CREATE HOLDER -->
+<ng-template #DeleteHolderModal let-modal>
+    <div class="modal-header">
+
+        <h2 class="modal-title text-uppercase text-center" id="modal-basic-title">Eliminar de Titular</h2>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">×</span>
+        </button>
+        <div class="close-modal" data-dismiss="modal">
+
+        </div>
+    </div>
+    <div class="modal-body">
+        <p>Está seguro que desea eliminar el registro?.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="modal.dismiss('Cancel')">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="deleteHolder()">Eliminar</button>
+      </div>
+</ng-template>
+<!--END: CREATE MOVEMENT MODAL-->
