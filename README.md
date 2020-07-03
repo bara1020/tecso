@@ -49,3 +49,4 @@
 	para revisión de las soluciones implementadas.  
 	
 	- Asegurarse de que los permisos de acceso al repositorio sean adecuados para que quien reciba la url pueda realizar el clonado.
+	

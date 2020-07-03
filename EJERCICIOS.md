@@ -100,11 +100,39 @@ Ejemplos/propuestas:
 - Reemplazar la base de datos configurada en memoria (H2) por una a elección de entre las siguientes: PostgreSQL o MySQL.
 	De hacerlo, la solución deberá incluir:
 		- Información sobre la BD utilizada.
+            MySql 5.7.24
 		- Script de creación e inicialización de datos.
+            Se encuentra en el archivo bank.sql
 		- Modificación correspondiente en la configuración del datasource.
+        spring:
+            profiles: dev
+            jpa:
+                database-platform: org.hibernate.dialect.MySQL5Dialect
+                show-sql: true
+                hibernate:
+                ddl-auto: update
+            datasource:
+                url: jdbc:mysql://localhost:3306/bank
+                driver-class-name: com.mysql.jdbc.Driver
+                username: tecso
+                password: tecso
+                #initialization-mode: always
 		- Cualquier otra información que considere necesaria.
 
 - etc (cualquier funcionalidad adicional que el candidato considere pertinente).
+spring:
+	profiles: dev
+	jpa:
+		database-platform: org.hibernate.dialect.MySQL5Dialect
+		show-sql: true
+		hibernate:
+		ddl-auto: update
+	datasource:
+		url: jdbc:mysql://localhost:3306/bank
+		driver-class-name: com.mysql.jdbc.Driver
+		username: tecso
+		password: tecso
+		#initialization-mode: always
 
 
 {

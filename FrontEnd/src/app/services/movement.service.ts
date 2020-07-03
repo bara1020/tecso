@@ -27,7 +27,7 @@ export class MovementService {
     /**
    * Se encarga de create una nueva cuenta
    */
-  public createMovement(movement:Movement): Observable<any> {
+  public createMovement(movement:Movement): Observable<any> {    
     return this._http.post(GlobalConstants.apiURL + `account/movement`,movement, this.httpOptions).pipe(
       data => data,
       error => error

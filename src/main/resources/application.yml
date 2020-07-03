@@ -12,13 +12,13 @@ spring:
   profiles: dev
   jpa:
     database-platform: org.hibernate.dialect.MySQL5Dialect
-    show-sql: true    hibernate:      ddl-auto: update
+    show-sql: true    hibernate:      ddl-auto: create
   datasource:
     url: jdbc:mysql://localhost:3306/bank
     driver-class-name: com.mysql.jdbc.Driver
     username: tecso
     password: tecso
-    #initialization-mode: always
+    initialization-mode: always
     
 jwt:
   signing:

@@ -36,7 +36,7 @@
                 <tr *ngFor="let holder of holdersList; let holderIndex = index" (click)="holderSelected(holderIndex)">
                     <td scope="row">
                         <label *ngIf="holder.holderType.holderType == 'NATURAL'">
-                            {{holder.naturalPerson.name}}
+                            {{holder.naturalPerson.name}} {{holder.naturalPerson.lastName}}
                         </label>
                         <label *ngIf="holder.holderType.holderType == 'JURIDICO'">
                             {{holder.legalEntity.name}}
