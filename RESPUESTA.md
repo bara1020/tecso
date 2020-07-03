@@ -66,6 +66,6 @@ Se encuentra en el archivo bank.sql
 
 •	En caso se requerirlo se adjunta tambien el script para la construcción de la base de datos llamado bank.sql
 
-•   La solución al 1.ejercicio-modelado se deja en el archivo PDF llamado ejercicio-modelado.pdf. Para este punto se tiene 
+•   La solución al 1.ejercicio-modelado se deja en el archivo PDF llamado ejercicio-modelado.png. Para este punto se tiene 
 
 
