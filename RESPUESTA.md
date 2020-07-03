@@ -59,13 +59,15 @@ Se encuentra en el archivo bank.sql
     Password: tecso
 
 ## ---------------------------- ##   
-## NOTAS IMPORTANTE: ##
+## NOTAS IMPORTANTES: ##
 ## ---------------------------- ##
 
 •	En el yml se deja activada la opción de la creación de base de datos y la inserción de registros configurado en el data.sql
 
 •	En caso se requerirlo se adjunta tambien el script para la construcción de la base de datos llamado bank.sql
 
-•   La solución al 1.ejercicio-modelado se deja en el archivo PDF llamado ejercicio-modelado.png. Para este punto se tiene 
+•   La solución al 1.ejercicio-modelado se deja en el archivo PDF llamado ejercicio-modelado.png.
+
+•   El proyecto del Front fue construido con Angular y se podrá encontrar el la carpeta FRONTEND de la raiz del proyecto
 
 
